@@ -21,4 +21,17 @@ public class Player : MonoBehaviour
         Vector3 velocity = speed * inputDir * Time.deltaTime * inputDir.magnitude;
         transform.Translate(velocity);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        print("trigger collision");
+        if(other.CompareTag("Enemy"))
+        {
+
+            Destroy(other.gameObject);
+        }
+    }
+
+    
+    
 }
