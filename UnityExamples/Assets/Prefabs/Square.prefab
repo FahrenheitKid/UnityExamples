@@ -95,6 +95,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
+  target: {fileID: 0}
+  direction: {x: 0, y: 0, z: 0}
+  strength: 10
 --- !u!50 &5461500224125513486
 Rigidbody2D:
   serializedVersion: 4

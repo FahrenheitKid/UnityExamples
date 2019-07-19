@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
 
     [SerializeField]
@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected Vector3 direction;
     [SerializeField]
-    protected float strength;
+    protected int strength;
 
     // Start is called before the first frame update
     void Start()
@@ -38,5 +38,10 @@ public class Enemy : MonoBehaviour
     {
         direction = target.position - transform.position;
         direction = direction.normalized;
+    }
+
+    public int getStrength()
+    {
+        return strength;
     }
 }
