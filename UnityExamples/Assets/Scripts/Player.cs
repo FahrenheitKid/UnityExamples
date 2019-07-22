@@ -66,12 +66,14 @@ public class Player : MonoBehaviour
        
         if (other.CompareTag("Enemy"))
         {
+            print("Colidiu!");
             if (other.GetComponent<Square>())
             {
                 takeDamage(other.GetComponent<Square>().getStrength());
             }
             else if (other.GetComponent<Triangle>())
             {
+
             }
 
             Destroy(other.gameObject);
