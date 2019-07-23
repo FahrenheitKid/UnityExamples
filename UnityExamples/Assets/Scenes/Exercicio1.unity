@@ -130,6 +130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 171047553}
   - component: {fileID: 171047554}
+  - component: {fileID: 171047555}
   m_Layer: 0
   m_Name: Wall (1)
   m_TagString: Untagged
@@ -177,6 +178,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &171047555
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171047552}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &213877887
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,6 +383,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 1625f9ca5072db649b6821514e7d1d48, type: 3}
       propertyPath: m_Name
       value: TimersManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 1625f9ca5072db649b6821514e7d1d48, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 1625f9ca5072db649b6821514e7d1d48, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1001,6 +1027,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1505542748}
   - component: {fileID: 1505542749}
+  - component: {fileID: 1505542750}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -1048,18 +1075,63 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &1505542750
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505542747}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!114 &1514165832 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1684447607510180085, guid: 03fbf8a76ac1d774289a23dcefe926ad,
     type: 3}
   m_PrefabInstance: {fileID: 1684447607459746244}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1700622574}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85a093a646d3bdc4aa129e86ea0b7b0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1700622574 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1684447607510180074, guid: 03fbf8a76ac1d774289a23dcefe926ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 1684447607459746244}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &1700622575
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700622574}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 5
+  m_Radius: 0.23
+  m_SlopeLimit: 45
+  m_StepOffset: 0.1
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1880630535
 GameObject:
   m_ObjectHideFlags: 0
@@ -1205,6 +1277,16 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1684447607510180085, guid: 03fbf8a76ac1d774289a23dcefe926ad,
+        type: 3}
+      propertyPath: hpBar
+      value: 
+      objectReference: {fileID: 895523365}
+    - target: {fileID: 1684447607510180085, guid: 03fbf8a76ac1d774289a23dcefe926ad,
+        type: 3}
+      propertyPath: smoothSpeedTime
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1684447607510180087, guid: 03fbf8a76ac1d774289a23dcefe926ad,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1260,10 +1342,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1684447607510180085, guid: 03fbf8a76ac1d774289a23dcefe926ad,
+    - target: {fileID: 1684447607510180084, guid: 03fbf8a76ac1d774289a23dcefe926ad,
         type: 3}
-      propertyPath: hpBar
-      value: 
-      objectReference: {fileID: 895523365}
-    m_RemovedComponents: []
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1684447607510180084, guid: 03fbf8a76ac1d774289a23dcefe926ad, type: 3}
+    - {fileID: 1684447607510180075, guid: 03fbf8a76ac1d774289a23dcefe926ad, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 03fbf8a76ac1d774289a23dcefe926ad, type: 3}

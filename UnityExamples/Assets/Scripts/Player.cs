@@ -5,12 +5,21 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private float speed = 1;
+    [SerializeField]
+    private float runSpeed = 10;
+    [SerializeField]
+    private float smoothSpeedVelocity;
+    [SerializeField]
+    private float smoothSpeedTime = 0.2f;
 
     [SerializeField]
     private Slider hpBar;
 
     [SerializeField]
      Game game_ref;
+
+    [SerializeField]
+    CharacterController charController_ref;
 
     [SerializeField]
     private int maxHp = 100;
@@ -49,6 +58,11 @@ public class Player : MonoBehaviour
         {
             game_ref = GameObject.FindGameObjectWithTag("Game").GetComponent<Game>();
         }
+
+        if(!charController_ref || charController_ref == null)
+        {
+            charController_ref = GetComponent<CharacterController>();
+        }
     }
 
     // Update is called once per frame
@@ -57,8 +71,23 @@ public class Player : MonoBehaviour
         // queremos mover apenas no x, então pegamos o input apenas horizontal
         Vector2 inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), 0);
         inputDir = inputDir.normalized;
+
+        float targetSpeed = runSpeed * inputDir.magnitude;
+
+        //atualizamos nossa velocidade atual com  a velocidade alvo suavizada
+        speed = Mathf.SmoothDamp(speed, targetSpeed, ref smoothSpeedVelocity, smoothSpeedTime);
         Vector3 velocity = speed * inputDir * Time.deltaTime * inputDir.magnitude;
-        transform.Translate(velocity);
+
+        //print(velocity);
+        //aqui efetuamos a movimentação chamando o método Move do Character controller
+        // Na função passamos o vetor de movimentação (multiplicamos por Time.deltaTime pois como estamos na função Update, queremos mover o personagem só a quantidade necessário baseado no último frame)
+        charController_ref.Move(velocity);
+        //transform.Translate(velocity);
+        //aqui atualizamos a velociade inicial com a velocidade interna do character controller que é mais precisa
+        speed = new Vector2(charController_ref.velocity.x, charController_ref.velocity.z).magnitude;
+
+
+        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
