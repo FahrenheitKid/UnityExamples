@@ -1,31 +1,105 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System.Linq;
+using Timers;
 
 public class Player : MonoBehaviour
 {
+    [Header("Speed Settings")]
     [SerializeField]
     private float speed = 1;
+
     [SerializeField]
     private float runSpeed = 10;
+
     [SerializeField]
     private float smoothSpeedVelocity;
+
     [SerializeField]
     private float smoothSpeedTime = 0.2f;
 
+    private Vector2 velocity = Vector2.zero;
+
+    [Header("Score Settings")]
+    [SerializeField]
+    TextMeshProUGUI scoreText;
+    [SerializeField]
+    TextMeshProUGUI multiplierText;
+
+    [SerializeField]
+    private int _score = 0;  // Backing store
+
+    public int Score
+    {
+        get
+        {
+            return _score;
+        }
+        set
+        {
+            if ((value <= 0))
+            {
+                _score = 0;
+            }
+            else _score = value;
+
+            scoreText.text = "Score: " + _score;
+        }
+    }
+    [SerializeField]
+    float scoreTimer;
+    [SerializeField]
+    float scoreTimerMax = 5;
+    [SerializeField]
+    private float _scoreMultiplier = 1;  // Backing store
+
+    public float ScoreMultiplier
+    {
+        get
+        {
+            return _scoreMultiplier;
+        }
+        set
+        {
+            if ((value <= 1))
+            {
+                _scoreMultiplier = 1;
+                multiplierText.text = "";
+            }
+            else
+            {
+                _scoreMultiplier = value;
+                multiplierText.text = _scoreMultiplier + "x";
+            }
+
+            
+        }
+    }
+
+    [SerializeField]
+    private AudioSource hitSound;
+
+    [SerializeField]
+    private Game game_ref;
+
+    [SerializeField]
+    private Rigidbody2D rigidbody_ref;
+
+
+    
+
+
+    [Header("Hp Settings")]
     [SerializeField]
     private Slider hpBar;
-
-    [SerializeField]
-     Game game_ref;
-
-    [SerializeField]
-    CharacterController charController_ref;
 
     [SerializeField]
     private int maxHp = 100;
 
     [SerializeField]
     private int _hp = 0;  // Backing store
+
     public int Hp
     {
         get
@@ -59,10 +133,16 @@ public class Player : MonoBehaviour
             game_ref = GameObject.FindGameObjectWithTag("Game").GetComponent<Game>();
         }
 
-        if(!charController_ref || charController_ref == null)
+        if (!rigidbody_ref || rigidbody_ref == null)
         {
-            charController_ref = GetComponent<CharacterController>();
+            rigidbody_ref = GetComponent<Rigidbody2D>();
         }
+
+        hitSound = GetComponent<AudioSource>();
+        scoreTimer = Time.time;
+        
+        TimersManager.SetLoopableTimer(this, 1f, increaseScore);
+
     }
 
     // Update is called once per frame
@@ -76,23 +156,61 @@ public class Player : MonoBehaviour
 
         //atualizamos nossa velocidade atual com  a velocidade alvo suavizada
         speed = Mathf.SmoothDamp(speed, targetSpeed, ref smoothSpeedVelocity, smoothSpeedTime);
-        Vector3 velocity = speed * inputDir * Time.deltaTime * inputDir.magnitude;
+        velocity = speed * inputDir * Time.deltaTime * inputDir.magnitude;
 
-        //print(velocity);
-        //aqui efetuamos a movimentação chamando o método Move do Character controller
-        // Na função passamos o vetor de movimentação (multiplicamos por Time.deltaTime pois como estamos na função Update, queremos mover o personagem só a quantidade necessário baseado no último frame)
-        charController_ref.Move(velocity);
-        //transform.Translate(velocity);
-        //aqui atualizamos a velociade inicial com a velocidade interna do character controller que é mais precisa
-        speed = new Vector2(charController_ref.velocity.x, charController_ref.velocity.z).magnitude;
+        transform.Translate(velocity);
 
 
-        
+        ScoreTimer();
+        fixCollision();
+    }
+
+    public void ScoreTimer()
+    {
+        if(Time.time >= scoreTimer+ scoreTimerMax)
+        {
+            scoreTimer = Time.time;
+            ScoreMultiplier++;
+
+        }
+    }
+
+    public void increaseScore()
+    {
+        Score += (int)(1f * ScoreMultiplier);
+    }
+    public void fixCollision()
+    {
+        BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+        // Retrieve all colliders we have intersected after velocity has been applied.
+        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
+
+        foreach (Collider2D hit in hits)
+        {
+            // Ignore our own collider.
+            if (hit == boxCollider)
+                continue;
+
+            ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
+
+            // Ensure that we are still overlapping this collider.
+            // The overlap may no longer exist due to another intersected collider
+            // pushing us out of this one.
+            if (colliderDistance.isOverlapped)
+            {
+                transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
+
+                // If we intersect an object beneath us, set grounded to true.
+                if (Vector2.Angle(colliderDistance.normal, Vector2.up) < 90 && velocity.y < 0)
+                {
+                    //  grounded = true;
+                }
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-       
         if (other.CompareTag("Enemy"))
         {
             print("Colidiu!");
@@ -102,9 +220,11 @@ public class Player : MonoBehaviour
             }
             else if (other.GetComponent<Triangle>())
             {
-
             }
 
+            hitSound.Play();
+            ScoreMultiplier = 0;
+            scoreTimer = Time.time;
             Destroy(other.gameObject);
         }
     }
