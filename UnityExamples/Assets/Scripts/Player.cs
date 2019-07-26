@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Timers;
 using TMPro;
-using System.Linq;
-using Timers;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -23,9 +22,10 @@ public class Player : MonoBehaviour
 
     [Header("Score Settings")]
     [SerializeField]
-    TextMeshProUGUI scoreText;
+    private TextMeshProUGUI scoreText;
+
     [SerializeField]
-    TextMeshProUGUI multiplierText;
+    private TextMeshProUGUI multiplierText;
 
     [SerializeField]
     private int _score = 0;  // Backing store
@@ -47,10 +47,13 @@ public class Player : MonoBehaviour
             scoreText.text = "Score: " + _score;
         }
     }
+
     [SerializeField]
-    float scoreTimer;
+    private float scoreTimer;
+
     [SerializeField]
-    float scoreTimerMax = 5;
+    private float scoreTimerMax = 5;
+
     [SerializeField]
     private float _scoreMultiplier = 1;  // Backing store
 
@@ -72,23 +75,14 @@ public class Player : MonoBehaviour
                 _scoreMultiplier = value;
                 multiplierText.text = _scoreMultiplier + "x";
             }
-
-            
         }
     }
-
-    [SerializeField]
-    private AudioSource hitSound;
 
     [SerializeField]
     private Game game_ref;
 
     [SerializeField]
     private Rigidbody2D rigidbody_ref;
-
-
-    
-
 
     [Header("Hp Settings")]
     [SerializeField]
@@ -138,18 +132,16 @@ public class Player : MonoBehaviour
             rigidbody_ref = GetComponent<Rigidbody2D>();
         }
 
-        hitSound = GetComponent<AudioSource>();
         scoreTimer = Time.time;
-        
-        TimersManager.SetLoopableTimer(this, 1f, increaseScore);
 
+        TimersManager.SetLoopableTimer(this, 1f, increaseScore);
     }
 
     // Update is called once per frame
     private void Update()
     {
         // queremos mover apenas no x, então pegamos o input apenas horizontal
-        Vector2 inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), 0);
+        Vector2 inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         inputDir = inputDir.normalized;
 
         float targetSpeed = runSpeed * inputDir.magnitude;
@@ -160,18 +152,16 @@ public class Player : MonoBehaviour
 
         transform.Translate(velocity);
 
-
         ScoreTimer();
         fixCollision();
     }
 
     public void ScoreTimer()
     {
-        if(Time.time >= scoreTimer+ scoreTimerMax)
+        if (Time.time >= scoreTimer + scoreTimerMax)
         {
             scoreTimer = Time.time;
             ScoreMultiplier++;
-
         }
     }
 
@@ -179,6 +169,7 @@ public class Player : MonoBehaviour
     {
         Score += (int)(1f * ScoreMultiplier);
     }
+
     public void fixCollision()
     {
         BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
@@ -217,15 +208,15 @@ public class Player : MonoBehaviour
             if (other.GetComponent<Square>())
             {
                 takeDamage(other.GetComponent<Square>().getStrength());
+                other.GetComponent<Square>().Death(true);
             }
             else if (other.GetComponent<Triangle>())
             {
+                other.GetComponent<Triangle>().Death(true);
             }
 
-            hitSound.Play();
             ScoreMultiplier = 0;
             scoreTimer = Time.time;
-            Destroy(other.gameObject);
         }
     }
 

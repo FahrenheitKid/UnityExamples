@@ -1,58 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Timers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
-using Timers;
 
 public class Game : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI gameOverText;
-    [SerializeField]
-    TextMeshProUGUI winText;
-    [SerializeField]
-    Player player_Ref;
+    private TextMeshProUGUI gameOverText;
 
     [SerializeField]
-    GameObject square_Prefab;
-    [SerializeField]
-    GameObject triangle_Prefab;
-
+    private TextMeshProUGUI winText;
 
     [SerializeField]
-    List <Enemy> enemyList;
+    private Player player_Ref;
 
     [SerializeField]
-    float enemyPerSecond = 0.5f;
-    [SerializeField]
-    float enemySpawnOffset = 20f;
+    private GameObject square_Prefab;
 
     [SerializeField]
-    Timer timerEnemySpawn;
+    private GameObject triangle_Prefab;
 
+    [SerializeField]
+    private List<Enemy> enemyList;
+
+    [SerializeField]
+    private float enemyPerSecond = 0.5f;
+
+    [SerializeField]
+    private float enemySpawnOffset = 20f;
+
+    [SerializeField]
+    private Timer timerEnemySpawn;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-
         timerEnemySpawn = new Timer(1 / enemyPerSecond, Timer.INFINITE, spawnEnemy);
         TimersManager.SetTimer(this, timerEnemySpawn);
 
-        if(!player_Ref || player_Ref == null)
+        if (!player_Ref || player_Ref == null)
         {
             player_Ref = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         }
-
-
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
-
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(0);
         }
@@ -72,12 +68,12 @@ public class Game : MonoBehaviour
         // se o inimigo vai se mover majoritariamente na vertical
         bool isVertical = Random.value > 0.5f;
 
-        if(isVertical)
+        if (isVertical)
         {
             if (Random.value > 0.5f) // spawn na parte de cima
             {
-                posY = -enemySpawnOffset;  
-        }
+                posY = -enemySpawnOffset;
+            }
             else // spawn na parte de baixo
             {
                 posY = Screen.height + enemySpawnOffset;
@@ -97,29 +93,34 @@ public class Game : MonoBehaviour
             }
 
             posY = Random.Range(0, Screen.height);
-
         }
 
-
-        int whichEnemy = Random.Range(0, 2);
+        int whichEnemy = Random.Range(1, 2);
         Vector2 spawnPos = new Vector2(posX, posY);
         spawnPos = Camera.main.ScreenToWorldPoint(spawnPos);
         switch (whichEnemy)
         {
             case 0:
-                
+
                 Square sq = Instantiate(square_Prefab, spawnPos, Quaternion.identity).GetComponent<Square>();
                 enemyList.Add(sq);
 
-             
                 break;
+
+            case 1:
+
+                Triangle tr = Instantiate(triangle_Prefab, spawnPos, Quaternion.identity).GetComponent<Triangle>();
+                enemyList.Add(tr);
+                break;
+
             default:
-                goto case 0;
+                goto case 1;
                 break;
         }
+    }
 
-      
-
-        
+    public void RemoveEnemyFromList(Enemy e)
+    {
+        enemyList.Remove(e);
     }
 }

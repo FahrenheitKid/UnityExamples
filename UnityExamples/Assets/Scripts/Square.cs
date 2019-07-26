@@ -1,22 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Square : Enemy
 {
-
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player").transform;
-        speed = 5;
+        
         Init();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Move();
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Wall") && passWall)
+        {
+            passWall = false;
+            
+        }
+        else if(collision.CompareTag("Wall") && !passWall)
+        {
+            Death(false);
+        }
+    }
 }

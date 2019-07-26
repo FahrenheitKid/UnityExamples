@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace Timers
 {
@@ -18,7 +18,7 @@ namespace Timers
         // Whether the game is paused
         private static bool m_bPaused = false;
 
-        void Awake()
+        private void Awake()
         {
             if (m_instance != null)
             {
@@ -69,7 +69,6 @@ namespace Timers
         {
             m_bPaused = pauseStatus;
         }
-
 
         /// <summary>
         /// Set timer
@@ -187,7 +186,7 @@ namespace Timers
         public static float Interval(UnityAction unityAction) { Timer timer = GetTimerByName(unityAction); return timer == null ? 0f : timer.Interval(); }
 
         /// <summary>
-        /// Get total loops count (INFINITE (which is uint.MaxValue) if is constantly looping) 
+        /// Get total loops count (INFINITE (which is uint.MaxValue) if is constantly looping)
         /// </summary>
         /// <param name="unityAction">Delegate name</param>
         public static uint LoopsCount(UnityAction unityAction) { Timer timer = GetTimerByName(unityAction); return timer == null ? 0 : timer.LoopsCount(); }

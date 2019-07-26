@@ -1,1 +1,1 @@
-﻿using UnityEngine;using System.Collections.Generic;using Timers;public class GUI_TimersList : MonoBehaviour{    public List<Timer> Timers = new List<Timer>();    protected virtual void Start()    {        TimersManager.AddTimers(this, Timers);    }}
+﻿using System.Collections.Generic;using Timers;using UnityEngine;public class GUI_TimersList : MonoBehaviour{    public List<Timer> Timers = new List<Timer>();    protected virtual void Start()    {        TimersManager.AddTimers(this, Timers);    }}
