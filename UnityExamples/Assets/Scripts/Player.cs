@@ -18,6 +18,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float smoothSpeedTime = 0.2f;
 
+    [SerializeField]
+    private Vector2 inputDir = Vector2.zero;
+
     private Vector2 velocity = Vector2.zero;
 
     [Header("Score Settings")]
@@ -140,9 +143,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        // queremos mover apenas no x, então pegamos o input apenas horizontal
-        Vector2 inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        inputDir = inputDir.normalized;
+        handleInput();
 
         float targetSpeed = runSpeed * inputDir.magnitude;
 
@@ -154,6 +155,39 @@ public class Player : MonoBehaviour
 
         ScoreTimer();
         fixCollision();
+    }
+
+    public void handleInput()
+    {
+        //caso seja na plataforma android
+#if UNITY_ANDROID
+
+        if (Input.touches.Length > 0 && Input.touches.Length < 2)
+        {
+            if(Input.touches[0].phase == TouchPhase.Began || Input.touches[0].phase ==  TouchPhase.Stationary)
+            {
+                if(Input.touches[0].position.x < Screen.width / 2)
+                {
+                    inputDir = new Vector2(-1, 0);
+                }
+                else
+                {
+                    inputDir = new Vector2(1, 0);
+                }
+            }
+            else if(Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled)
+            {
+                inputDir = Vector2.zero;
+            }
+        }
+
+#else
+        // queremos mover apenas no x, então pegamos o input apenas horizontal
+        inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+#endif
+
+        inputDir = inputDir.normalized;
     }
 
     public void ScoreTimer()

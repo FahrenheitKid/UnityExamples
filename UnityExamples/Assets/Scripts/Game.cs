@@ -33,16 +33,38 @@ public class Game : MonoBehaviour
     [SerializeField]
     private Timer timerEnemySpawn;
 
+    bool twoPlayers = false;
+
+    bool isMenu = false;
+
     // Start is called before the first frame update
     private void Start()
     {
-        timerEnemySpawn = new Timer(1 / enemyPerSecond, Timer.INFINITE, spawnEnemy);
-        TimersManager.SetTimer(this, timerEnemySpawn);
+        
 
-        if (!player_Ref || player_Ref == null)
+       
+            isMenu = SceneManager.GetActiveScene().name == "menu";
+        
+       
+        
+
+        if(!isMenu)
         {
-            player_Ref = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            timerEnemySpawn = new Timer(1 / enemyPerSecond, Timer.INFINITE, spawnEnemy);
+            TimersManager.SetTimer(this, timerEnemySpawn);
+
+            if (!player_Ref || player_Ref == null)
+            {
+                player_Ref = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            }
+
         }
+        
+    }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
@@ -95,7 +117,7 @@ public class Game : MonoBehaviour
             posY = Random.Range(0, Screen.height);
         }
 
-        int whichEnemy = Random.Range(1, 2);
+        int whichEnemy = Random.Range(0, 2);
         Vector2 spawnPos = new Vector2(posX, posY);
         spawnPos = Camera.main.ScreenToWorldPoint(spawnPos);
         switch (whichEnemy)
@@ -122,5 +144,11 @@ public class Game : MonoBehaviour
     public void RemoveEnemyFromList(Enemy e)
     {
         enemyList.Remove(e);
+    }
+
+
+    public void teste()
+    {
+        twoPlayers = true;
     }
 }
