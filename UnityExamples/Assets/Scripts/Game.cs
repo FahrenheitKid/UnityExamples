@@ -3,6 +3,7 @@ using Timers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class Game : MonoBehaviour
     private TextMeshProUGUI winText;
 
     [SerializeField]
-    private Player player_Ref;
+    private Player[] players_Ref = new Player[2];
 
     [SerializeField]
     private GameObject square_Prefab;
@@ -33,38 +34,59 @@ public class Game : MonoBehaviour
     [SerializeField]
     private Timer timerEnemySpawn;
 
-    bool twoPlayers = false;
+    [SerializeField]
+    private bool twoPlayers = false;
 
-    bool isMenu = false;
+    [SerializeField]
+    private bool isMenu = false;
+
+    [SerializeField]
+    private Toggle togglePlayers;
 
     // Start is called before the first frame update
     private void Start()
     {
-        
+        isMenu = SceneManager.GetActiveScene().name == "Menu";
 
-       
-            isMenu = SceneManager.GetActiveScene().name == "menu";
-        
-       
-        
-
-        if(!isMenu)
+        if (!isMenu)
         {
             timerEnemySpawn = new Timer(1 / enemyPerSecond, Timer.INFINITE, spawnEnemy);
             TimersManager.SetTimer(this, timerEnemySpawn);
 
-            if (!player_Ref || player_Ref == null)
+            GameObject[] aux = GameObject.FindGameObjectsWithTag("Player");
+                
+                for (int i = 0; i < aux.Length; i++)
+                {
+                    if (i >= players_Ref.Length) break;
+
+                    players_Ref[i] = aux[i].GetComponent<Player>();
+                }
+               
+                if(!twoPlayers)
+                {
+                    players_Ref[1].gameObject.SetActive(false);
+                }
+            
+            if (!gameOverText || gameOverText == null)
             {
-                player_Ref = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+                gameOverText = GameObject.Find("Game Over Text").GetComponent<TextMeshProUGUI>();
+                gameOverText.enabled = false;
             }
 
         }
+
         
     }
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += this.OnLoadCallback;
+    }
+
+    void OnLoadCallback(Scene scene, LoadSceneMode sceneMode)
+    {
+        Start();
     }
 
     // Update is called once per frame
@@ -72,7 +94,7 @@ public class Game : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -146,9 +168,15 @@ public class Game : MonoBehaviour
         enemyList.Remove(e);
     }
 
-
-    public void teste()
+    public void loadGame()
     {
-        twoPlayers = true;
+        SceneManager.LoadScene(1);
+        
+    }
+
+    public void set2Players()
+    {
+        twoPlayers = togglePlayers.isOn;
+        print("2Players = " + twoPlayers);
     }
 }

@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+
+    [SerializeField]
+    bool isPlayer1;
+
     [Header("Speed Settings")]
     [SerializeField]
     private float speed = 1;
@@ -159,6 +163,17 @@ public class Player : MonoBehaviour
 
     public void handleInput()
     {
+
+        if(isPlayer1)
+        {
+            inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        }
+        else
+        {
+            inputDir = new Vector2(Input.GetAxisRaw("Horizontal2"), Input.GetAxisRaw("Vertical2"));
+        }
+        
+
         //caso seja na plataforma android
 #if UNITY_ANDROID
 
@@ -181,11 +196,10 @@ public class Player : MonoBehaviour
             }
         }
 
-#else
-        // queremos mover apenas no x, então pegamos o input apenas horizontal
-        inputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
 #endif
+       
+
+
 
         inputDir = inputDir.normalized;
     }
